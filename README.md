@@ -2,7 +2,7 @@
 
 Set of tools for customing Datastax Enterprise Stack (Cassandra and Solr)
 
-Usage:
+<h4>Usage:</h4>
 
 1. First, must have to downlaod Datastax Enterprise 
 
@@ -23,3 +23,7 @@ https://portal.datastax.com/downloads.php?dsedownload=tar/enterprise/dse.tar.gz
 # FIT Copy Transformers
 
 - <b>LowerCaseFieldInputTransformer</b> - Insert lowercase value into [name]_ci document field
+
+# Related DSE issues:
+<h5>Lowercase filter factory doesn't work when docvalues=true</h3>
+- https://stackoverflow.com/questions/39697408/lowercase-filter-factory-doesnt-work-when-docvalues-true
