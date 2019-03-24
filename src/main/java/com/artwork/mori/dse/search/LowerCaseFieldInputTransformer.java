@@ -5,11 +5,14 @@ import org.apache.lucene.document.Document;
 import org.apache.solr.core.SolrCore;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.schema.SchemaField;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(LowerCaseFieldInputTransformer.class);
 
     @Override
     public boolean evaluate(String field) {
@@ -25,6 +28,7 @@ public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
                                    String fieldValue,
                                    DocumentHelper helper) throws IOException {
         try {
+            LOGGER.info("Custom FIT transforming - key: {}, value: {}", key, fieldValue);
             if (fieldInfo.getName().equals(Fields.SHORT_NAME.name)) {
                 String lowerCaseFieldValue = fieldValue.toLowerCase();
                 SchemaField lowerCaseField = core.getLatestSchema().getFieldOrNull(Fields.SHORT_NAME.name  + "_ci");
@@ -35,6 +39,7 @@ public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
                 helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, lowerCaseField, lowerCaseFieldValue);
             }
         } catch (Exception ex) {
+            LOGGER.error("Custom FIT transforming failed - key: {}, value: {}. Reason: {}", key, fieldValue, ex.getMessage());
             throw new RuntimeException(ex);
         }
     }
