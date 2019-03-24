@@ -30,18 +30,23 @@ public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
         try {
             LOGGER.info("Custom FIT transforming - key: {}, value: {}", key, fieldValue);
             if (fieldInfo.getName().equals(Fields.SHORT_NAME.name)) {
-                String lowerCaseFieldValue = fieldValue.toLowerCase();
-                SchemaField lowerCaseField = core.getLatestSchema().getFieldOrNull(Fields.SHORT_NAME.name  + "_ci");
-                helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, lowerCaseField, lowerCaseFieldValue);
+                writeField(core, key, doc, fieldValue, helper, Fields.SHORT_NAME);
             } else if (fieldInfo.getName().equals(Fields.NAME.name)) {
-                String lowerCaseFieldValue = fieldValue.toLowerCase();
-                SchemaField lowerCaseField = core.getLatestSchema().getFieldOrNull(Fields.NAME.name + "_ci");
-                helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, lowerCaseField, lowerCaseFieldValue);
+                writeField(core, key, doc, fieldValue, helper, Fields.NAME);
             }
         } catch (Exception ex) {
             LOGGER.error("Custom FIT transforming failed - key: {}, value: {}. Reason: {}", key, fieldValue, ex.getMessage());
             throw new RuntimeException(ex);
         }
+    }
+
+    private void writeField(SolrCore core, String key, Document doc, String fieldValue, DocumentHelper helper, Fields field)
+            throws IOException {
+        LOGGER.info("Custom FIT transforming for field: {}", field.name);
+        String lowerCaseFieldValue = fieldValue.toLowerCase();
+        SchemaField lowerCaseField = core.getLatestSchema().getFieldOrNull(field.name + "_ci");
+        helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, lowerCaseField, lowerCaseFieldValue);
+        LOGGER.info("Custom FIT transforming for field: {} - lowercased: {}", lowerCaseField);
     }
 
     enum Fields {
