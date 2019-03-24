@@ -4,7 +4,7 @@ Set of tools for customing Datastax Enterprise Stack (Cassandra and Solr)
 
 <h4>Usage:</h4>
 
-1. First, must have to downlaod Datastax Enterprise 
+1. First, you must have to downlaod Datastax Enterprise instalation package
 
 https://portal.datastax.com/downloads.php?dsedownload=tar/enterprise/dse.tar.gz
 
@@ -17,8 +17,9 @@ https://portal.datastax.com/downloads.php?dsedownload=tar/enterprise/dse.tar.gz
 3. Run <i>maven build</i>
 4. Copy jar file into [datastax server instalation directory]/dse/resources/solr/lib
 
-5. Put this line into your <i>solrconfig.xml</i> file:
-<fieldInputTransformer name="dse" class="com.artwork.mori.dse.search.LowerCaseFieldInputTransformer"></fieldInputTransformer>
+5. Put this line into your <i>solrconfig.xml</i> file (inside <i>\<config></i> section):
+
+\<fieldInputTransformer name="dse" class="com.artwork.mori.dse.search.AbstractLowerCaseFieldInputTransformer"></fieldInputTransformer>
 
 # FIT Copy Transformers
 

@@ -18,8 +18,8 @@
         <field docValues="true" indexed="true" multiValued="false" name="name_ci" type="StrField"/>
 
         <field indexed="true" multiValued="false" name="id" type="StrField"/>
-        <field indexed="true" multiValued="false" name="cis" type="StrField"/>
+        <field indexed="true" multiValued="false" name="owner" type="StrField"/>
 
     </fields>
-    <uniqueKey>(cis,id)</uniqueKey>
+    <uniqueKey>(owner,id)</uniqueKey>
 </schema>

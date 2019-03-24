@@ -9,14 +9,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Set;
 
-public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
+public abstract class AbstractLowerCaseFieldInputTransformer extends FieldInputTransformer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LowerCaseFieldInputTransformer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLowerCaseFieldInputTransformer.class);
+    private final Set<String> fields;
+
+    public AbstractLowerCaseFieldInputTransformer(Set<String> fields) {
+        this.fields = fields;
+    }
 
     @Override
     public boolean evaluate(String field) {
-        return field.equals(Fields.SHORT_NAME.name) || field.equals(Fields.NAME.name);
+        return fields.contains(field);
     }
 
     @Override
@@ -28,11 +34,12 @@ public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
                                    String fieldValue,
                                    DocumentHelper helper) throws IOException {
         try {
-            LOGGER.info("Custom FIT transforming - key: {}, value: {}", key, fieldValue);
-            if (fieldInfo.getName().equals(Fields.SHORT_NAME.name)) {
-                writeField(core, key, doc, fieldValue, helper, Fields.SHORT_NAME);
-            } else if (fieldInfo.getName().equals(Fields.NAME.name)) {
-                writeField(core, key, doc, fieldValue, helper, Fields.NAME);
+            for (String field : this.fields) {
+                if (fieldInfo.getName().equals(field)) {
+                    LOGGER.info("Custom FIT transforming - key: {}, value: {}", key, fieldValue);
+                    this.writeField(core, key, doc, fieldValue, helper, field);
+                    break;
+                }
             }
         } catch (Exception ex) {
             LOGGER.error("Custom FIT transforming failed - key: {}, value: {}. Reason: {}", key, fieldValue, ex.getMessage());
@@ -40,24 +47,12 @@ public class LowerCaseFieldInputTransformer extends FieldInputTransformer {
         }
     }
 
-    private void writeField(SolrCore core, String key, Document doc, String fieldValue, DocumentHelper helper, Fields field)
+    private void writeField(SolrCore core, String key, Document doc, String fieldValue, DocumentHelper helper, String field)
             throws IOException {
-        LOGGER.info("Custom FIT transforming for field: {}", field.name);
+        LOGGER.info("Custom FIT transforming for field: {}", field);
         String lowerCaseFieldValue = fieldValue.toLowerCase();
-        SchemaField lowerCaseField = core.getLatestSchema().getFieldOrNull(field.name + "_ci");
+        SchemaField lowerCaseField = core.getLatestSchema().getField(field + "_ci");
         helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, lowerCaseField, lowerCaseFieldValue);
         LOGGER.info("Custom FIT transforming for field: {} - lowercased: {}", lowerCaseField);
-    }
-
-    enum Fields {
-
-        SHORT_NAME("shortname"),
-        NAME("name");
-
-        String name;
-
-        Fields(String name) {
-            this.name = name;
-        }
     }
 }
