@@ -47,12 +47,23 @@ public abstract class AbstractLowerCaseFieldInputTransformer extends FieldInputT
         }
     }
 
-    private void writeField(SolrCore core, String key, Document doc, String fieldValue, DocumentHelper helper, String field)
+    private void writeField(final SolrCore core,
+                            final String key,
+                            final Document doc,
+                            final String fieldValue,
+                            final DocumentHelper helper,
+                            final String field)
             throws IOException {
+
         LOGGER.info("Custom FIT transforming for field: {}", field);
-        String lowerCaseFieldValue = fieldValue.toLowerCase();
-        SchemaField lowerCaseField = core.getLatestSchema().getField(field + "_ci");
+
+        final String lowerCaseFieldValue = fieldValue.toLowerCase();
+        final SchemaField lowerCaseField = core.getLatestSchema().getField(field + "_ci");
+        final SchemaField normalField = core.getLatestSchema().getField(field);
+
         helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, lowerCaseField, lowerCaseFieldValue);
+        helper.addFieldToDocument(core, core.getLatestSchema(), key, doc, normalField, fieldValue);
+
         LOGGER.info("Custom FIT transforming for field: {} - lowercased: {}", lowerCaseField);
     }
 }
